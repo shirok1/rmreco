@@ -74,13 +74,10 @@ pub enum Message {
     // DartClientCmd([u8; 12]), // TODO: Official typedef is different from description, verify
 
     #[deku(id = "0x0301")]
-    StudentInteractiveData {
-        content_id: u16,
-        send_id: u16,
-        receive_id: u16,
-        #[deku(ctx = "*content_id, frame_size")]
-        content: StudentInteractiveDataType,
-    },
+    StudentInteractiveData(
+        #[deku(ctx = "frame_size")]
+        StudentInteractiveData
+    ),
     // #[deku(id = "0x0302")]
     // CustomControllerInteractiveData([u8; 4]),
     // #[deku(id = "0x0303")]
@@ -277,6 +274,27 @@ pub enum RefereeWarningLevel {
     RedCard,
     #[deku(id = "3")]
     Forfeiture,
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug)]
+#[deku(ctx = "frame_size: u16")]
+pub struct StudentInteractiveData {
+    #[deku(update = "self.get_content_id()")]
+    content_id: u16,
+    send_id: u16,
+    receive_id: u16,
+    #[deku(ctx = "*content_id, frame_size")]
+    content: StudentInteractiveDataType,
+}
+
+impl StudentInteractiveData {
+    fn get_content_id(&self) -> u16 {
+        match &self.content {
+            StudentInteractiveDataType::PeerToPeerCommunication { content_id, .. } => *content_id,
+            any => any.deku_id().unwrap(),
+        }
+    }
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
