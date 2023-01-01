@@ -3,6 +3,9 @@ use graphic::{GraphicData, GraphicDeleteOperation};
 
 pub mod graphic;
 
+#[cfg(test)]
+mod tests;
+
 #[deku_derive(DekuRead, DekuWrite)]
 #[derive(Debug)]
 #[deku(magic = b"\xA5")]
