@@ -52,10 +52,7 @@ pub enum Message {
         supplied_number: SuppliedProjectileNumber,
     },
     #[deku(id = "0x0104")]
-    RefereeWarning {
-        level: RefereeWarningLevel,
-        foul_robot_id: u8,
-    },
+    RefereeWarning(RefereeWarning),
     #[deku(id = "0x0105")]
     DartRemainingTime(u8),
     // #[deku(id = "0x0201")]
@@ -273,13 +270,13 @@ pub enum SuppliedProjectileNumber {
 #[deku_derive(DekuRead, DekuWrite)]
 #[derive(Debug)]
 #[deku(type = "u8")]
-pub enum RefereeWarningLevel {
+pub enum RefereeWarning {
     #[deku(id = "1")]
-    YellowCard,
+    YellowCard { foul_robot_id: u8 },
     #[deku(id = "2")]
-    RedCard,
+    RedCard { foul_robot_id: u8 },
     #[deku(id = "3")]
-    Forfeiture,
+    Forfeiture(#[deku(pad_bytes_after = "1")] ()),
 }
 
 #[deku_derive(DekuRead, DekuWrite)]

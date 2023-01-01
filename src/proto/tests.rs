@@ -9,3 +9,13 @@ fn graphic_data_size() {
         assert_eq!(rest_byte_size, 0);
     }
 }
+
+#[test]
+fn referee_warning_size() {
+    let mut data = [0u8; 2];
+    for i in 0b01..=0b11 {
+        data[0] = i;
+        let ((_, rest_byte_size), _) = RefereeWarning::from_bytes((&data[..], 0)).unwrap();
+        assert_eq!(rest_byte_size, 0);
+    }
+}
