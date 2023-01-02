@@ -81,12 +81,22 @@ pub enum Message {
         #[deku(ctx = "frame_size")]
         StudentInteractiveData
     ),
-    // #[deku(id = "0x0302")]
-    // CustomControllerInteractiveData([u8; 4]),
-    // #[deku(id = "0x0303")]
-    // MinimapTransmission([u8; 15]),
-    // #[deku(id = "0x0305")]
-    // MinimapReceipt([u8; 10]),
+    #[deku(id = "0x0302")]
+    CustomControllerInteractiveData(
+        #[deku(bytes_read = "frame_size - 9")]
+        Vec<u8>
+    ),
+    #[deku(id = "0x0303")]
+    MinimapTransmission {
+        target_position: (i32, i32, i32),
+        command_keyboard: u8,
+        target_robot_id: u16,
+    },
+    #[deku(id = "0x0305")]
+    MinimapReceipt {
+        target_robot_id: u16,
+        target_position: (i32, i32),
+    },
 
     // #[deku(id = "0x0304")]
     // RemoteControl([u8; 12]),
