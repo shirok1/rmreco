@@ -26,19 +26,28 @@ fn student_interactive_data_size() {
     let mut data = Vec::new();
     for custom_size in 1..=113 {
         data.resize((2 + 6 + custom_size) as usize, 0);
+        const CONTENT_ID: u16 = 0x0200;
         [data[0], data[1]] = 0x0301_u16.to_le_bytes();
-        [data[2], data[3]] = 0x0200_u16.to_le_bytes();
+        [data[2], data[3]] = CONTENT_ID.to_le_bytes();
         [data[4], data[5]] = 0x1234_u16.to_le_bytes();
         [data[6], data[7]] = 0x5678_u16.to_le_bytes();
-        let (rest_bits, _) = Message::read(
+        let (rest_bits, data) = Message::read(
             data.view_bits::<Msb0>(), 9 + 6 + custom_size).unwrap();
         assert_eq!(rest_bits.len(), 0);
+        assert!(matches!(data,
+            Message::StudentInteractiveData(
+                StudentInteractiveData {
+                    content_id: CONTENT_ID,
+                    content: StudentInteractiveDataType::PeerToPeerCommunication { content_id: CONTENT_ID, .. }, ..
+                })));
     }
     for custom_size in 1..=113 {
         data.resize((custom_size) as usize, 0);
-        let (rest_bits, _) = StudentInteractiveDataType::read(
-            data.view_bits::<Msb0>(), (0x0200, 9 + 6 + custom_size)).unwrap();
+        const CONTENT_ID: u16 = 0x0200;
+        let (rest_bits, data) = StudentInteractiveDataType::read(
+            data.view_bits::<Msb0>(), (CONTENT_ID, 9 + 6 + custom_size)).unwrap();
         assert_eq!(rest_bits.len(), 0);
+        assert!(matches!(data, StudentInteractiveDataType::PeerToPeerCommunication { content_id: CONTENT_ID, .. }));
     }
 }
 
