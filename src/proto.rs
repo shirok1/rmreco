@@ -317,6 +317,7 @@ impl StudentInteractiveData {
 pub enum StudentInteractiveDataType {
     #[deku(id_pat = "0x0200..=0x02FF")]
     PeerToPeerCommunication {
+        #[deku(skip, default = "content_id")] // TODO: remove work-around
         content_id: u16,
         #[deku(bytes_read = "frame_size - 9 - 6")]
         content: Vec<u8>,
