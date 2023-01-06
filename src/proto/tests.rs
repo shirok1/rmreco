@@ -1,3 +1,4 @@
+use deku::bitvec::{BitView, Msb0};
 use super::*;
 
 #[test]
@@ -17,5 +18,37 @@ fn referee_warning_size() {
         data[0] = i;
         let ((_, rest_byte_size), _) = RefereeWarning::from_bytes((&data[..], 0)).unwrap();
         assert_eq!(rest_byte_size, 0);
+    }
+}
+
+#[test]
+fn student_interactive_data_size() {
+    let mut data = Vec::new();
+    for custom_size in 1..=113 {
+        data.resize((2 + 6 + custom_size) as usize, 0);
+        [data[0], data[1]] = 0x0301_u16.to_le_bytes();
+        [data[2], data[3]] = 0x0200_u16.to_le_bytes();
+        [data[4], data[5]] = 0x1234_u16.to_le_bytes();
+        [data[6], data[7]] = 0x5678_u16.to_le_bytes();
+        let (rest_bits, _) = Message::read(
+            data.view_bits::<Msb0>(), 9 + 6 + custom_size).unwrap();
+        assert_eq!(rest_bits.len(), 0);
+    }
+    for custom_size in 1..=113 {
+        data.resize((custom_size) as usize, 0);
+        let (rest_bits, _) = StudentInteractiveDataType::read(
+            data.view_bits::<Msb0>(), (0x0200, 9 + 6 + custom_size)).unwrap();
+        assert_eq!(rest_bits.len(), 0);
+    }
+}
+
+#[test]
+fn custom_controller_interactive_size() {
+    let mut data = Vec::new();
+    for custom_size in 1..=30 {
+        data.resize((2 + custom_size) as usize, 0);
+        [data[0], data[1]] = 0x0302_u16.to_le_bytes();
+        let (rest_bits, _) = Message::read(data.view_bits::<Msb0>(), 9 + custom_size).unwrap();
+        assert_eq!(rest_bits.len(), 0);
     }
 }
