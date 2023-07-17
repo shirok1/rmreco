@@ -208,14 +208,51 @@ pub enum Message {
         command_keyboard: u8,
         target_robot_id: u16,
     },
+    #[deku(id = "0x0304")]
+    RemoteControl {
+        mouse_x: u16,
+        mouse_y: u16,
+        mouse_z: u16,
+        left_button_down: bool,
+        right_button_down: bool,
+        #[deku(bits = "1")]
+        w_key_down: bool,
+        #[deku(bits = "1")]
+        s_key_down: bool,
+        #[deku(bits = "1")]
+        a_key_down: bool,
+        #[deku(bits = "1")]
+        d_key_down: bool,
+        #[deku(bits = "1")]
+        shift_key_down: bool,
+        #[deku(bits = "1")]
+        ctrl_key_down: bool,
+        #[deku(bits = "1")]
+        q_key_down: bool,
+        #[deku(bits = "1")]
+        e_key_down: bool,
+        #[deku(bits = "1")]
+        r_key_down: bool,
+        #[deku(bits = "1")]
+        f_key_down: bool,
+        #[deku(bits = "1")]
+        g_key_down: bool,
+        #[deku(bits = "1")]
+        z_key_down: bool,
+        #[deku(bits = "1")]
+        x_key_down: bool,
+        #[deku(bits = "1")]
+        c_key_down: bool,
+        #[deku(bits = "1")]
+        v_key_down: bool,
+        #[deku(bits = "1")]
+        b_key_down: bool,
+    },
     #[deku(id = "0x0305")]
     MinimapReceipt {
         target_robot_id: u16,
         target_position: (f32, f32),
     },
-
-    // #[deku(id = "0x0304")]
-    // RemoteControl([u8; 12]),
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
