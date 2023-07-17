@@ -64,14 +64,71 @@ pub enum Message {
     RefereeWarning(RefereeWarning),
     #[deku(id = "0x0105")]
     DartRemainingTime(u8),
-    // #[deku(id = "0x0201")]
-    // GameRobotStatus([u8; 27]),
-    // #[deku(id = "0x0202")]
-    // PowerHeatData([u8; 16]),
-    // #[deku(id = "0x0203")]
-    // GameRobotPos([u8; 16]),
-    // #[deku(id = "0x0204")]
-    // PowerRuneBuff(u8),
+    #[deku(id = "0x0201")]
+    GameRobotStatus {
+        robot_id: u8,
+        robot_level: u8,
+        remain_hp: u16,
+        max_hp: u16,
+
+        shooter_id1_17mm_cooling_rate: u16,
+        shooter_id1_17mm_cooling_limit: u16,
+        shooter_id1_17mm_speed_limit: u16,
+
+        shooter_id2_17mm_cooling_rate: u16,
+        shooter_id2_17mm_cooling_limit: u16,
+        shooter_id2_17mm_speed_limit: u16,
+
+        shooter_id1_42mm_cooling_rate: u16,
+        shooter_id1_42mm_cooling_limit: u16,
+        shooter_id1_42mm_speed_limit: u16,
+
+        chassis_power_limit: u16,
+
+        #[deku(bits = "1")]
+        mains_power_gimbal_output: bool,
+        #[deku(bits = "1")]
+        mains_power_chassis_output: bool,
+        #[deku(bits = "1")]
+        #[deku(pad_bits_after = "5")]
+        mains_power_shooter_output: bool,
+    },
+    #[deku(id = "0x0202")]
+    PowerHeatData {
+        chassis_volt: u16,
+        chassis_current: u16,
+        chassis_power: f32,
+        chassis_power_buffer: u16,
+        shooter_id1_17mm_cooling_heat: u16,
+        shooter_id2_17mm_cooling_heat: u16,
+        shooter_id1_42mm_cooling_heat: u16,
+    },
+    #[deku(id = "0x0203")]
+    GameRobotPos {
+        x: f32,
+        y: f32,
+        z: f32,
+        yaw: f32,
+    },
+    #[deku(id = "0x0204")]
+    PowerRuneBuff {
+        /// 机器人血量补血状态
+        #[deku(bits = "1")]
+        robot_hp_restoration_status: bool,
+
+        /// 枪口热量冷却加速
+        #[deku(bits = "1")]
+        barrel_heat_cooling_acceleration: bool,
+
+        /// 机器人防御加成
+        #[deku(bits = "1")]
+        robot_defense_buff: bool,
+
+        /// 机器人攻击加成
+        #[deku(bits = "1")]
+        #[deku(pad_bits_after = "4")]
+        robot_attack_buff: bool,
+    },
     #[deku(id = "0x0205")]
     AerialRobotEnergy(u8),
     // #[deku(id = "0x0206")]
