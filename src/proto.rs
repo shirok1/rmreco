@@ -170,6 +170,28 @@ pub enum Message {
         target_change_time: u16,
         latest_launch_cmd_time: u16,
     },
+    #[deku(id = "0x020B")]
+    GroundRobotPosition {
+        hero_x: f32,
+        hero_y: f32,
+        engineer_x: f32,
+        engineer_y: f32,
+        standard_3_x: f32,
+        standard_3_y: f32,
+        standard_4_x: f32,
+        standard_4_y: f32,
+        standard_5_x: f32,
+        standard_5_y: f32,
+    },
+    #[deku(id = "0x020C")]
+    RadarMarkData {
+        mark_hero_progress: u8,
+        mark_engineer_progress: u8,
+        mark_standard_3_progress: u8,
+        mark_standard_4_progress: u8,
+        mark_standard_5_progress: u8,
+        mark_sentry_progress: u8,
+    },
     #[deku(id = "0x0301")]
     StudentInteractiveData(
         #[deku(ctx = "frame_size")]
