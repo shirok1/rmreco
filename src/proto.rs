@@ -131,17 +131,45 @@ pub enum Message {
     },
     #[deku(id = "0x0205")]
     AerialRobotEnergy(u8),
-    // #[deku(id = "0x0206")]
-    // RobotHurt(u8),
-    // #[deku(id = "0x0207")]
-    // ShootData([u8; 6]),
-    // #[deku(id = "0x0208")]
-    // BulletRemaining([u8; 2]),
-    // #[deku(id = "0x0209")]
-    // RFIDStatus([u8; 4]),
-    // #[deku(id = "0x020A")]
-    // DartClientCmd([u8; 12]), // TODO: Official typedef is different from description, verify
-
+    #[deku(id = "0x0206")]
+    RobotHurt(u8),
+    #[deku(id = "0x0207")]
+    ShootData([u8; 7]),
+    #[deku(id = "0x0208")]
+    BulletRemaining([u8; 6]),
+    #[deku(id = "0x0209")]
+    RFIDStatus {
+        /// 基地增益点 RFID 状态
+        #[deku(bits = "1")]
+        base_gain_zone: bool,
+        /// 高地增益点 RFID 状态
+        #[deku(bits = "1")]
+        elevated_ground_gain_zone: bool,
+        /// 能量机关激活点 RFID 状态
+        #[deku(bits = "1")]
+        power_rune_activation_point: bool,
+        /// 飞坡增益点 RFID 状态
+        #[deku(bits = "1")]
+        launch_ramp_gain_zone: bool,
+        /// 前哨岗增益点 RFID 状态
+        #[deku(bits = "1")]
+        #[deku(pad_bits_after = "1")]
+        outpost_gain_zone: bool,
+        /// 补血点增益点 RFID 状态
+        #[deku(bits = "1")]
+        restoration_zone_buff: bool,
+        /// 工程机器人复活卡 RFID 状态
+        #[deku(bits = "1")]
+        #[deku(pad_bits_after = "24")]
+        engineer_robot_recovery_card: bool,
+    },
+    #[deku(id = "0x020A")]
+    DartClientCmd {
+        dart_launch_opening_status: u8,
+        dart_attack_target: u8,
+        target_change_time: u16,
+        latest_launch_cmd_time: u16,
+    },
     #[deku(id = "0x0301")]
     StudentInteractiveData(
         #[deku(ctx = "frame_size")]
