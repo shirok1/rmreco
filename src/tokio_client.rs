@@ -64,11 +64,11 @@ impl RefereeClientReader {
 
 pub struct RefereeClientReaderWatch {
     join_handle: tokio::task::JoinHandle<()>,
-    game_robot_hp: watch::Receiver<(proto::TeamHP, proto::TeamHP)>,
-    game_robot_status: watch::Receiver<proto::GameRobotStatus>,
-    game_status: watch::Receiver<proto::GameStatus>,
-    radar_mark_data: watch::Receiver<proto::RadarMarkData>,
-    event_data: watch::Receiver<proto::EventData>,
+    pub game_robot_hp: watch::Receiver<(proto::TeamHP, proto::TeamHP)>,
+    pub game_robot_status: watch::Receiver<proto::GameRobotStatus>,
+    pub game_status: watch::Receiver<proto::GameStatus>,
+    pub radar_mark_data: watch::Receiver<proto::RadarMarkData>,
+    pub event_data: watch::Receiver<proto::EventData>,
 }
 
 impl RefereeClientReaderWatch {
