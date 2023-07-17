@@ -203,8 +203,8 @@ pub enum Message {
         Vec<u8>
     ),
     #[deku(id = "0x0303")]
-    MinimapTransmission {
-        target_position: (i32, i32, i32),
+    MapCommand {
+        target_position: (f32, f32, f32),
         command_keyboard: u8,
         target_robot_id: u16,
     },
