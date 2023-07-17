@@ -40,12 +40,7 @@ pub struct Frame2 {
 #[serde(tag = "t", content = "c", rename_all = "snake_case")]
 pub enum Message {
     #[deku(id = "0x0001")]
-    GameStatus {
-        game_type: GameType,
-        game_progress: GameProgress,
-        stage_remain_time: u16,
-        sync_timestamp: u64,
-    },
+    GameStatus(GameStatus),
     #[deku(id = "0x0002")]
     GameResult(Winner),
     #[deku(id = "0x0003")]
@@ -241,10 +236,20 @@ pub enum Message {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct GameStatus {
+    pub game_type: GameType,
+    pub game_progress: GameProgress,
+    pub stage_remain_time: u16,
+    pub sync_timestamp: u64,
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[deku(type = "u8")]
 #[deku(bits = "4")]
 pub enum GameType {
+    #[default]
     #[deku(id = "0")]
     Student,
     #[deku(id = "1")]
@@ -260,10 +265,11 @@ pub enum GameType {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 #[deku(type = "u8")]
 #[deku(bits = "4")]
 pub enum GameProgress {
+    #[default]
     #[deku(id = "0")]
     PreCompetitionStage,
     #[deku(id = "1")]
