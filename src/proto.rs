@@ -51,10 +51,6 @@ pub enum Message {
         red: TeamHP,
         blue: TeamHP,
     },
-    // #[deku(id = "0x0004")]
-    // DartStatus,
-    // #[deku(id = "0x0005")]
-    // ICRABuffDebuffZoneAndLurkStatus,
     #[deku(id = "0x0101")]
     EventData(EventData),
     #[deku(id = "0x0102")]
