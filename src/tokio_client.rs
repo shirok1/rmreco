@@ -68,6 +68,7 @@ pub struct RefereeClientReaderWatch {
     game_robot_status: watch::Receiver<proto::GameRobotStatus>,
     game_status: watch::Receiver<proto::GameStatus>,
     radar_mark_data: watch::Receiver<proto::RadarMarkData>,
+    event_data: watch::Receiver<proto::EventData>,
 }
 
 impl RefereeClientReaderWatch {
@@ -76,6 +77,7 @@ impl RefereeClientReaderWatch {
         let (game_robot_status_tx, game_robot_status) = watch::channel(proto::GameRobotStatus::default());
         let (game_status_tx, game_status) = watch::channel(proto::GameStatus::default());
         let (radar_mark_data_tx, radar_mark_data) = watch::channel(proto::RadarMarkData::default());
+        let (event_data_tx, event_data) = watch::channel(proto::EventData::default());
         let join_handle = tokio::spawn(async move {
             while let Some(frame) = reader.recv().await {
                 match frame {
@@ -92,6 +94,9 @@ impl RefereeClientReaderWatch {
                             }
                             proto::Message::RadarMarkData(data) => {
                                 radar_mark_data_tx.send(data).unwrap();
+                            }
+                            proto::Message::EventData(data) => {
+                                event_data_tx.send(data).unwrap();
                             }
                             proto::Message::DartRemainingTime(_) |
                             proto::Message::GameRobotPos { .. } |
@@ -115,6 +120,7 @@ impl RefereeClientReaderWatch {
             game_robot_status,
             game_status,
             radar_mark_data,
+            event_data,
         }
     }
 }

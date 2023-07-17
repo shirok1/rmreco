@@ -304,7 +304,7 @@ pub struct TeamHP {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct EventData {
     /// 己方补给站 1 号补血点占领状态
     #[deku(bits = "1")]
