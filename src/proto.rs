@@ -1,5 +1,18 @@
 use deku::prelude::*;
-use graphic::{GraphicData, GraphicDeleteOperation};
+use serde::{Serialize, Deserialize};
+
+pub mod crc {
+    const CRC_8_ALGORITHM: crc::Algorithm<u8> = crc::Algorithm {
+        init: 0xff,
+        ..crc::CRC_8_MAXIM_DOW
+    };
+    const CRC_16_ALGORITHM: crc::Algorithm<u16> = crc::Algorithm {
+        init: 0xffff,
+        ..crc::CRC_16_KERMIT
+    };
+    pub(crate) const CRC_8: crc::Crc<u8> = crc::Crc::<u8>::new(&CRC_8_ALGORITHM);
+    pub(crate) const CRC_16: crc::Crc<u16> = crc::Crc::<u16>::new(&CRC_16_ALGORITHM);
+}
 
 pub mod graphic;
 
@@ -324,17 +337,17 @@ pub enum StudentInteractiveDataType {
     },
     #[deku(id = "0x0100")]
     GraphicDelete {
-        operate_type: GraphicDeleteOperation,
+        operate_type: graphic::GraphicDeleteOperation,
         layer: u8,
     },
     #[deku(id = "0x0101")]
-    GraphicDraw1([GraphicData; 1]),
+    GraphicDraw1([graphic::GraphicData; 1]),
     #[deku(id = "0x0102")]
-    GraphicDraw2([GraphicData; 2]),
+    GraphicDraw2([graphic::GraphicData; 2]),
     #[deku(id = "0x0103")]
-    GraphicDraw5([GraphicData; 5]),
+    GraphicDraw5([graphic::GraphicData; 5]),
     #[deku(id = "0x0104")]
-    GraphicDraw7([GraphicData; 7]),
+    GraphicDraw7([graphic::GraphicData; 7]),
     #[deku(id = "0x0110")]
-    GraphicDrawCharacter([u8; 45]),
+    GraphicDrawCharacter((graphic::GraphicData, [u8; 30])),
 }
