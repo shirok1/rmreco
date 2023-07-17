@@ -36,6 +36,7 @@ pub struct Frame2 {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u16")]
 #[deku(ctx = "frame_size: u16")]
+#[serde(tag = "t", content = "c", rename_all = "snake_case")]
 pub enum Message {
     #[deku(id = "0x0001")]
     GameStatus {
