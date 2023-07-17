@@ -15,6 +15,7 @@ pub mod crc {
 }
 
 pub mod graphic;
+pub mod proprietary;
 
 #[cfg(test)]
 mod tests;
@@ -254,6 +255,16 @@ pub enum Message {
         target_robot_id: u16,
         target_position: (f32, f32),
     },
+    #[deku(id = "0x0306")]
+    CustomClientData([u8; 8]),
+    // #[deku(id = "0x0307")]
+    // MapSentryData {
+    //     intention: u8,
+    //     start_position_x: u16,
+    //     start_position_y: u16,
+    //     delta_x: [i8; 49],
+    //     delta_y: [i8; 49],
+    // },
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
@@ -470,6 +481,7 @@ impl StudentInteractiveData {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 // #[deku(type = "u16")]
 #[deku(ctx = "content_id: u16, frame_size: u16", id = "content_id")]
+#[serde(untagged)]
 pub enum StudentInteractiveDataType {
     #[deku(id_pat = "0x0200..=0x02FF")]
     PeerToPeerCommunication {
