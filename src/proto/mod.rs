@@ -154,14 +154,7 @@ pub enum Message {
         standard_5_y: f32,
     },
     #[deku(id = "0x020C")]
-    RadarMarkData {
-        mark_hero_progress: u8,
-        mark_engineer_progress: u8,
-        mark_standard_3_progress: u8,
-        mark_standard_4_progress: u8,
-        mark_standard_5_progress: u8,
-        mark_sentry_progress: u8,
-    },
+    RadarMarkData(RadarMarkData),
     #[deku(id = "0x0301")]
     StudentInteractiveData(
         #[deku(ctx = "frame_size")]
@@ -464,6 +457,17 @@ pub struct GameRobotStatus {
     #[deku(bits = "1")]
     #[deku(pad_bits_after = "5")]
     pub mains_power_shooter_output: bool,
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct RadarMarkData {
+    pub mark_hero_progress: u8,
+    pub mark_engineer_progress: u8,
+    pub mark_standard_3_progress: u8,
+    pub mark_standard_4_progress: u8,
+    pub mark_standard_5_progress: u8,
+    pub mark_sentry_progress: u8,
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
