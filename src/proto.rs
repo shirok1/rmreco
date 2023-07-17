@@ -20,7 +20,7 @@ pub mod graphic;
 mod tests;
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(magic = b"\xA5")]
 pub struct Frame2 {
     // pub sof: u8,
@@ -33,7 +33,7 @@ pub struct Frame2 {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u16")]
 #[deku(ctx = "frame_size: u16")]
 pub enum Message {
@@ -116,7 +116,7 @@ pub enum Message {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 #[deku(bits = "4")]
 pub enum GameType {
@@ -133,7 +133,7 @@ pub enum GameType {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 #[deku(bits = "4")]
 pub enum GameProgress {
@@ -153,7 +153,7 @@ pub enum GameProgress {
 
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum Winner {
     #[deku(id = "0")]
@@ -165,7 +165,7 @@ pub enum Winner {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct TeamHP {
     _1: u16,
     _2: u16,
@@ -178,7 +178,7 @@ pub struct TeamHP {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EventData {
     /// 己方补给站 1 号补血点占领状态
     #[deku(bits = "1")]
@@ -226,7 +226,7 @@ pub struct EventData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum ProjectileSupplier {
     #[deku(id = "1")]
@@ -236,7 +236,7 @@ pub enum ProjectileSupplier {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum ProjectileReloadingRobot {
     #[deku(id = "0")]
@@ -265,7 +265,7 @@ pub enum ProjectileReloadingRobot {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum ProjectileOutletStatus {
     #[deku(id = "0")]
@@ -277,7 +277,7 @@ pub enum ProjectileOutletStatus {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum SuppliedProjectileNumber {
     #[deku(id = "50")]
@@ -291,7 +291,7 @@ pub enum SuppliedProjectileNumber {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum RefereeWarning {
     #[deku(id = "1")]
@@ -303,7 +303,7 @@ pub enum RefereeWarning {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(ctx = "frame_size: u16")]
 pub struct StudentInteractiveData {
     #[deku(update = "self.get_content_id()")]
@@ -324,7 +324,7 @@ impl StudentInteractiveData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 // #[deku(type = "u16")]
 #[deku(ctx = "content_id: u16, frame_size: u16", id = "content_id")]
 pub enum StudentInteractiveDataType {

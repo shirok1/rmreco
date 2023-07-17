@@ -1,7 +1,8 @@
 use deku::prelude::*;
+use serde::{Serialize, Deserialize};
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 pub enum GraphicDeleteOperation {
     #[deku(id = "0")]
@@ -13,7 +14,7 @@ pub enum GraphicDeleteOperation {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GraphicData {
     pub graphic_name: [u8; 3],
     pub operate_type: GraphicAddOperation,
@@ -27,7 +28,7 @@ pub struct GraphicData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 #[deku(bits = 3)]
 pub enum GraphicAddOperation {
@@ -42,7 +43,7 @@ pub enum GraphicAddOperation {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(ctx = "graphic_type: u8", id = "graphic_type")]
 pub enum GraphicEnum {
     #[deku(id = "0")]
@@ -64,7 +65,7 @@ pub enum GraphicEnum {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StraightLineRectangleData {
     // start_angle: 9, end_angle: 9
     #[deku(pad_bits_before = "18", bits = 10)]
@@ -81,7 +82,7 @@ pub struct StraightLineRectangleData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CircleData {
     // start_angle: 9, end_angle: 9
     #[deku(pad_bits_before = "18", bits = 10)]
@@ -96,7 +97,7 @@ pub struct CircleData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EllipseData {
     // start_angle: 9, end_angle: 9
     #[deku(pad_bits_before = "18", bits = 10)]
@@ -113,7 +114,7 @@ pub struct EllipseData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ArcData {
     #[deku(bits = 9)]
     pub start_angle: u16,
@@ -133,7 +134,7 @@ pub struct ArcData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FloatingNumberData {
     #[deku(bits = 9)]
     pub font_size: u16,
@@ -149,7 +150,7 @@ pub struct FloatingNumberData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IntegerData {
     #[deku(bits = 9)]
     pub font_size: u16,
@@ -164,7 +165,7 @@ pub struct IntegerData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CharacterData {
     #[deku(bits = 9)]
     pub font_size: u16,
@@ -180,7 +181,7 @@ pub struct CharacterData {
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[deku(type = "u8")]
 #[deku(bits = 4)]
 pub enum GraphicColor {
