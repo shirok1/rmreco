@@ -65,12 +65,13 @@ impl RefereeClientReader {
 pub struct RefereeClientReaderWatch {
     join_handle: tokio::task::JoinHandle<()>,
     game_robot_hp: watch::Receiver<(proto::TeamHP, proto::TeamHP)>,
-    // game_robot_status: watch::Receiver<proto::GameRobotStatus>,
+    game_robot_status: watch::Receiver<proto::GameRobotStatus>,
 }
 
 impl RefereeClientReaderWatch {
     async fn spawn_radar(mut reader: RefereeClientReader) -> Self {
         let (game_robot_hp_tx, game_robot_hp) = watch::channel((proto::TeamHP::default(), proto::TeamHP::default()));
+        let (game_robot_status_tx, game_robot_status) = watch::channel(proto::GameRobotStatus::default());
         let join_handle = tokio::spawn(async move {
             while let Some(frame) = reader.recv().await {
                 match frame {
@@ -79,8 +80,10 @@ impl RefereeClientReaderWatch {
                             proto::Message::GameRobotHP { red, blue } => {
                                 game_robot_hp_tx.send((red, blue)).unwrap();
                             }
+                            proto::Message::GameRobotStatus(status) => {
+                                game_robot_status_tx.send(status).unwrap();
+                            }
                             proto::Message::DartRemainingTime(_) |
-                            proto::Message::GameRobotStatus { .. } | // TODO: GameRobotStatus
                             proto::Message::GameStatus { .. } | // TODO: GameStatus
                             proto::Message::GameRobotPos { .. } |
                             proto::Message::RFIDStatus { .. } |
@@ -100,6 +103,7 @@ impl RefereeClientReaderWatch {
         Self {
             join_handle,
             game_robot_hp,
+            game_robot_status,
         }
     }
 }

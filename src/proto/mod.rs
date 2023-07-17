@@ -67,34 +67,7 @@ pub enum Message {
     #[deku(id = "0x0105")]
     DartRemainingTime(u8),
     #[deku(id = "0x0201")]
-    GameRobotStatus {
-        robot_id: u8,
-        robot_level: u8,
-        remain_hp: u16,
-        max_hp: u16,
-
-        shooter_id1_17mm_cooling_rate: u16,
-        shooter_id1_17mm_cooling_limit: u16,
-        shooter_id1_17mm_speed_limit: u16,
-
-        shooter_id2_17mm_cooling_rate: u16,
-        shooter_id2_17mm_cooling_limit: u16,
-        shooter_id2_17mm_speed_limit: u16,
-
-        shooter_id1_42mm_cooling_rate: u16,
-        shooter_id1_42mm_cooling_limit: u16,
-        shooter_id1_42mm_speed_limit: u16,
-
-        chassis_power_limit: u16,
-
-        #[deku(bits = "1")]
-        mains_power_gimbal_output: bool,
-        #[deku(bits = "1")]
-        mains_power_chassis_output: bool,
-        #[deku(bits = "1")]
-        #[deku(pad_bits_after = "5")]
-        mains_power_shooter_output: bool,
-    },
+    GameRobotStatus(GameRobotStatus),
     #[deku(id = "0x0202")]
     PowerHeatData {
         chassis_volt: u16,
@@ -454,6 +427,37 @@ pub enum RefereeWarning {
     RedCard { foul_robot_id: u8 },
     #[deku(id = "3")]
     Forfeiture(#[deku(pad_bytes_after = "1")] ()),
+}
+
+#[deku_derive(DekuRead, DekuWrite)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct GameRobotStatus {
+    pub robot_id: u8,
+    pub robot_level: u8,
+    pub remain_hp: u16,
+    pub max_hp: u16,
+
+    pub shooter_id1_17mm_cooling_rate: u16,
+    pub shooter_id1_17mm_cooling_limit: u16,
+    pub shooter_id1_17mm_speed_limit: u16,
+
+    pub shooter_id2_17mm_cooling_rate: u16,
+    pub shooter_id2_17mm_cooling_limit: u16,
+    pub shooter_id2_17mm_speed_limit: u16,
+
+    pub shooter_id1_42mm_cooling_rate: u16,
+    pub shooter_id1_42mm_cooling_limit: u16,
+    pub shooter_id1_42mm_speed_limit: u16,
+
+    pub chassis_power_limit: u16,
+
+    #[deku(bits = "1")]
+    pub mains_power_gimbal_output: bool,
+    #[deku(bits = "1")]
+    pub mains_power_chassis_output: bool,
+    #[deku(bits = "1")]
+    #[deku(pad_bits_after = "5")]
+    pub mains_power_shooter_output: bool,
 }
 
 #[deku_derive(DekuRead, DekuWrite)]
