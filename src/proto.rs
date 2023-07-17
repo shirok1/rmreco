@@ -261,6 +261,8 @@ pub enum Message {
 #[deku(type = "u8")]
 #[deku(bits = "4")]
 pub enum GameType {
+    #[deku(id = "0")]
+    Student,
     #[deku(id = "1")]
     RMUC,
     #[deku(id = "2")]
