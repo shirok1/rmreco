@@ -108,7 +108,7 @@ pub enum Message {
     #[deku(id = "0x0305")]
     MinimapReceipt {
         target_robot_id: u16,
-        target_position: (i32, i32),
+        target_position: (f32, f32),
     },
 
     // #[deku(id = "0x0304")]
