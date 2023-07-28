@@ -16,6 +16,7 @@ pub mod crc {
 
 pub mod graphic;
 pub mod proprietary;
+pub mod id;
 
 #[cfg(test)]
 mod tests;
