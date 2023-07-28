@@ -64,50 +64,38 @@ impl RefereeClientReader {
 
 pub struct RefereeClientReaderWatch {
     join_handle: tokio::task::JoinHandle<()>,
-    pub game_robot_hp: watch::Receiver<(proto::TeamHP, proto::TeamHP)>,
-    pub game_robot_status: watch::Receiver<proto::GameRobotStatus>,
-    pub game_status: watch::Receiver<proto::GameStatus>,
-    pub radar_mark_data: watch::Receiver<proto::RadarMarkData>,
-    pub event_data: watch::Receiver<proto::EventData>,
+    game_robot_hp: watch::Receiver<Option<(proto::TeamHP, proto::TeamHP)>>,
+    game_robot_status: watch::Receiver<Option<proto::GameRobotStatus>>,
+    game_status: watch::Receiver<Option<proto::GameStatus>>,
+    radar_mark_data: watch::Receiver<Option<proto::RadarMarkData>>,
+    event_data: watch::Receiver<Option<proto::EventData>>,
 }
 
 impl RefereeClientReaderWatch {
     async fn spawn_radar(mut reader: RefereeClientReader) -> Self {
-        let (game_robot_hp_tx, game_robot_hp) = watch::channel((proto::TeamHP::default(), proto::TeamHP::default()));
-        let (game_robot_status_tx, game_robot_status) = watch::channel(proto::GameRobotStatus::default());
-        let (game_status_tx, game_status) = watch::channel(proto::GameStatus::default());
-        let (radar_mark_data_tx, radar_mark_data) = watch::channel(proto::RadarMarkData::default());
-        let (event_data_tx, event_data) = watch::channel(proto::EventData::default());
+        let (game_robot_hp_tx, game_robot_hp) = watch::channel(None);
+        let (game_robot_status_tx, game_robot_status) = watch::channel(None);
+        let (game_status_tx, game_status) = watch::channel(None);
+        let (radar_mark_data_tx, radar_mark_data) = watch::channel(None);
+        let (event_data_tx, event_data) = watch::channel(None);
         let join_handle = tokio::spawn(async move {
             while let Some(frame) = reader.recv().await {
                 match frame {
-                    Ok(frame) => {
-                        match frame.message {
-                            proto::Message::GameRobotHP { red, blue } => {
-                                game_robot_hp_tx.send((red, blue)).unwrap();
-                            }
-                            proto::Message::GameRobotStatus(status) => {
-                                game_robot_status_tx.send(status).unwrap();
-                            }
-                            proto::Message::GameStatus(status) => {
-                                game_status_tx.send(status).unwrap();
-                            }
-                            proto::Message::RadarMarkData(data) => {
-                                radar_mark_data_tx.send(data).unwrap();
-                            }
-                            proto::Message::EventData(data) => {
-                                event_data_tx.send(data).unwrap();
-                            }
-                            proto::Message::DartRemainingTime(_) |
-                            proto::Message::GameRobotPos { .. } |
-                            proto::Message::RFIDStatus { .. } |
-                            proto::Message::PowerRuneBuff { .. } |
-                            proto::Message::PowerHeatData { .. } => {}
-                            _ => {
-                                debug!("Unhandled message: {:?}", frame.message);
-                            }
+                    Ok(frame) => match frame.message {
+                        proto::Message::GameRobotHP { red, blue } => { game_robot_hp_tx.send_replace(Some((red, blue))); }
+                        proto::Message::GameRobotStatus(status) => { game_robot_status_tx.send_replace(Some(status)); }
+                        proto::Message::GameStatus(status) => { game_status_tx.send_replace(Some(status)); }
+                        proto::Message::RadarMarkData(data) => { radar_mark_data_tx.send_replace(Some(data)); }
+                        proto::Message::EventData(data) => { event_data_tx.send_replace(Some(data)); }
+                        proto::Message::DartRemainingTime(_) |
+                        proto::Message::GameRobotPos { .. } |
+                        proto::Message::RFIDStatus { .. } |
+                        proto::Message::PowerRuneBuff { .. } |
+                        proto::Message::PowerHeatData { .. } => {}
+                        _ => {
+                            debug!("Unhandled message: {:?}", frame.message);
                         }
-                    }
+                    },
                     Err(err) => {
                         error!("Error while receiving frame: {}", err);
                     }
@@ -122,6 +110,21 @@ impl RefereeClientReaderWatch {
             radar_mark_data,
             event_data,
         }
+    }
+    pub async fn get_game_robot_hp(&mut self) -> (proto::TeamHP, proto::TeamHP) {
+        self.game_robot_hp.wait_for(Option::is_some).await.unwrap().clone().unwrap()
+    }
+    pub async fn get_game_robot_status(&mut self) -> proto::GameRobotStatus {
+        self.game_robot_status.wait_for(Option::is_some).await.unwrap().clone().unwrap()
+    }
+    pub async fn get_game_status(&mut self) -> proto::GameStatus {
+        self.game_status.wait_for(Option::is_some).await.unwrap().clone().unwrap()
+    }
+    pub async fn get_radar_mark_data(&mut self) -> proto::RadarMarkData {
+        self.radar_mark_data.wait_for(Option::is_some).await.unwrap().clone().unwrap()
+    }
+    pub async fn get_event_data(&mut self) -> proto::EventData {
+        self.event_data.wait_for(Option::is_some).await.unwrap().clone().unwrap()
     }
 }
 
