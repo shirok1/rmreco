@@ -6,6 +6,15 @@ pub enum WithSide<T> {
     Blue(T),
 }
 
+impl<T> WithSide<T> {
+    pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> WithSide<U> {
+        match self {
+            WithSide::Red(t) => WithSide::Red(f(t)),
+            WithSide::Blue(t) => WithSide::Blue(f(t)),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RobotJob {
     Hero,
