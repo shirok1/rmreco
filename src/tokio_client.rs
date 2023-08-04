@@ -46,6 +46,22 @@ impl RefereeClientWriter {
             target_position,
         }, 10).await
     }
+
+    /// 机器人之间通信
+    pub async fn send_p2p(&mut self, content_id: u16, send_id: u16, receive_id: u16, content: Vec<u8>) -> Result<(), codec::RefereeCodecError> {
+        let data_length = (content.len() + 6) as u16;
+        self.send_message_with_known_data_length(proto::Message::StudentInteractiveData(
+            proto::StudentInteractiveData {
+                content_id,
+                send_id,
+                receive_id,
+                content: proto::StudentInteractiveDataType::PeerToPeerCommunication {
+                    content_id,
+                    content,
+                },
+            }
+        ), data_length).await
+    }
 }
 
 #[derive(Debug)]
@@ -211,7 +227,9 @@ mod codec {
         type Error = RefereeCodecError;
 
         fn encode(&mut self, item: proto::Frame2, dst: &mut BytesMut) -> Result<(), Self::Error> {
+            let len = item.data_length;
             let mut buf = item.to_bytes().map_err(RefereeCodecError::Deku)?;
+            assert_eq!((len + 9) as usize, buf.len());
             let crc8 = proto::crc::CRC_8.checksum(&buf[..4]);
             buf[4] = crc8;
             let crc16 = proto::crc::CRC_16.checksum(&buf[..buf.len() - 2]).to_le_bytes();
