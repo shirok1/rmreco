@@ -1,16 +1,23 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-pub enum WithSide<T> {
-    Red(T),
-    Blue(T),
+pub enum Side {
+    Red,
+    Blue,
 }
 
-impl<T> WithSide<T> {
-    pub fn map<U, F: FnOnce(T) -> U>(self, f: F) -> WithSide<U> {
+impl Side {
+    pub const fn from_id(id: u8) -> Option<Self> {
+        match id {
+            0 => Some(Side::Red),
+            100 => Some(Side::Blue),
+            _ => None,
+        }
+    }
+    pub const fn opposite(&self) -> Self {
         match self {
-            WithSide::Red(t) => WithSide::Red(f(t)),
-            WithSide::Blue(t) => WithSide::Blue(f(t)),
+            Side::Red => Side::Blue,
+            Side::Blue => Side::Red,
         }
     }
 }
@@ -64,26 +71,23 @@ impl RobotJob {
             RobotJob::Radar => 9,
         }
     }
-}
-
-impl WithSide<RobotJob> {
-    pub const fn from_id(id: u8) -> Option<Self> {
+    pub const fn from_id_with_side(id: u8) -> Option<(Side, Self)> {
         match id {
-            1..=100 => Some(WithSide::Red(match RobotJob::from_id(id) {
+            0..=99 => Some((Side::Red, match RobotJob::from_id(id) {
                 None => return None,
                 Some(rj) => rj,
             })),
-            101..=200 => Some(WithSide::Blue(match RobotJob::from_id(id - 100) {
+            100..=199 => Some((Side::Blue, match RobotJob::from_id(id - 100) {
                 None => return None,
                 Some(rj) => rj,
             })),
             _ => None,
         }
     }
-    pub const fn to_id(&self) -> u8 {
-        match self {
-            WithSide::Red(job) => job.to_id(),
-            WithSide::Blue(job) => job.to_id() + 100,
+    pub const fn convert_to_id((side, job): &(Side, Self)) -> u8 {
+        match side {
+            Side::Red => job.to_id(),
+            Side::Blue => job.to_id() + 100,
         }
     }
 }
