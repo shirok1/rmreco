@@ -201,6 +201,6 @@ pub enum GraphicColor {
     Cyan,
     #[deku(id = "7")]
     Black,
-    #[deku(id = "7")]
+    #[deku(id = "8")]
     White,
 }
