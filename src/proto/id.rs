@@ -36,13 +36,18 @@ pub enum RobotJob {
 }
 
 impl RobotJob {
-    const LAND_ROBOT: [RobotJob; 6] = [
+    pub const LAND_ROBOT: [RobotJob; 6] = [
         RobotJob::Hero,
         RobotJob::Engineer,
         RobotJob::Infantry3,
         RobotJob::Infantry4,
         RobotJob::Infantry5,
         RobotJob::Sentry,
+    ];
+    pub const INFANTRY: [RobotJob; 3] = [
+        RobotJob::Infantry3,
+        RobotJob::Infantry4,
+        RobotJob::Infantry5,
     ];
     pub const fn from_id(id: u8) -> Option<Self> {
         match id {
