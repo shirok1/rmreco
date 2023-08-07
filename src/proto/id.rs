@@ -9,8 +9,8 @@ pub enum Side {
 impl Side {
     pub const fn from_id(id: u8) -> Option<Self> {
         match id {
-            0 => Some(Side::Red),
-            100 => Some(Side::Blue),
+            0..=99 => Some(Side::Red),
+            100..=199 => Some(Side::Blue),
             _ => None,
         }
     }
