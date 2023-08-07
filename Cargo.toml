@@ -1,10 +1,13 @@
 [package]
 name = "rmreco"
 version = "0.1.0"
+authors = ["Shiroki Satsuki <me@shirok1.dev>"]
 edition = "2021"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/shirok1/rmreco"
+description = "A Rust library for communicating with RoboMaster Referee System through serial."
 readme = "README.md"
+repository = "https://github.com/shirok1/rmreco"
+license = "MIT OR Apache-2.0"
+keywords = ["robomaster", "serial"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -31,3 +34,11 @@ crossbeam-channel = { version = "0.5", optional = true }
 [features]
 tokio_client = ["dep:tokio", "dep:tokio-serial", "dep:tokio-stream", "dep:tokio-util", "dep:futures-util"]
 blocking_client = ["dep:serialport", "dep:crossbeam-channel"]
+
+[dev-dependencies]
+tokio = { version = "*", features = ["full"] }
+tracing-subscriber = "0.3"
+
+[[example]]
+name = "info"
+required-features = ["tokio_client"]
