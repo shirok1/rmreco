@@ -1,6 +1,7 @@
 use futures_util::{SinkExt, StreamExt};
 use futures_util::stream::{SplitSink, SplitStream};
-use tokio::sync::watch;
+use tokio::select;
+use tokio::sync::{mpsc, watch};
 use tokio_serial::{SerialPortBuilderExt, SerialStream};
 use tokio_util::codec::{Decoder, Framed};
 use tracing::{debug, error, Instrument};
@@ -85,17 +86,28 @@ pub struct RefereeClientReaderWatch {
     game_status: watch::Receiver<Option<proto::GameStatus>>,
     radar_mark_data: watch::Receiver<Option<proto::RadarMarkData>>,
     event_data: watch::Receiver<Option<proto::EventData>>,
+    stop_signal: mpsc::Sender<()>,
 }
 
 impl RefereeClientReaderWatch {
+    async fn stop(self) -> Result<(), tokio::task::JoinError> {
+        self.stop_signal.send(()).await.unwrap();
+        self.join_handle.await
+    }
     async fn spawn_radar(mut reader: RefereeClientReader) -> Self {
         let (game_robot_hp_tx, game_robot_hp) = watch::channel(None);
         let (game_robot_status_tx, game_robot_status) = watch::channel(None);
         let (game_status_tx, game_status) = watch::channel(None);
         let (radar_mark_data_tx, radar_mark_data) = watch::channel(None);
         let (event_data_tx, event_data) = watch::channel(None);
+        let (stop_signal, mut stop_signal_rx) = mpsc::channel(1);
         let join_handle = tokio::spawn(async move {
-            while let Some(frame) = reader.recv().await {
+            loop {
+                let frame = select! {
+                    Some(frame) = reader.recv() => frame,
+                    _ = stop_signal_rx.recv() => { break; }
+                    else => { break; }
+                };
                 match frame {
                     Ok(frame) => match frame.message {
                         proto::Message::GameRobotHP { red, blue } => { game_robot_hp_tx.send_replace(Some((red, blue))); }
@@ -120,6 +132,7 @@ impl RefereeClientReaderWatch {
         }.instrument(tracing::info_span!("watch_radar")));
         Self {
             join_handle,
+            stop_signal,
             game_robot_hp,
             game_robot_status,
             game_status,
